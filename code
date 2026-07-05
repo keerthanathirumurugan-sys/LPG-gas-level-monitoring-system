@@ -1,0 +1,39 @@
+#include "HX711.h"
+#include <Wire.h>
+#include <LiquidCrystal_I2C.h>
+
+#define DT 3
+#define SCK 2
+
+HX711 scale;
+LiquidCrystal_I2C lcd(0x27, 16, 2);
+
+void setup() {
+  Serial.begin(9600);
+  lcd.init();
+  lcd.backlight();
+
+  scale.begin(DT, SCK);
+  scale.set_scale();
+  scale.tare();
+
+  lcd.setCursor(0, 0);
+  lcd.print("LPG Monitor");
+  delay(2000);
+}
+
+void loop() {
+  float weight = scale.get_units(10);
+
+  lcd.clear();
+  lcd.setCursor(0, 0);
+  lcd.print("Weight:");
+  lcd.print(weight);
+  lcd.print("kg");
+
+  Serial.print("Weight: ");
+  Serial.print(weight);
+  Serial.println(" kg");
+
+  delay(1000);
+}
